@@ -21,6 +21,7 @@ connect(host=MONGODB_URI)
 def add_user():
     """Add the admin user"""
     
+    
     user_data = {
         "name": "sas admin",
         "email": "admin@ammuchi.com",

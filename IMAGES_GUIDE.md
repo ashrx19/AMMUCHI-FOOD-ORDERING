@@ -12,6 +12,7 @@ Your images should go in: `static/images/`
 - WebP (`.webp`)
 - GIF (`.gif`)
 
+
 Example filenames:
 - `biryani.jpg`
 - `butter-chicken.png`
