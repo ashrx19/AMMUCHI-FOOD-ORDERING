@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders | Ammuchi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .order-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .order-card p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        .order-card strong {
+            color: #333;
+        }
+        .orders-section {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <h2>🍽️ Ammuchi</h2>
+    <nav>
+        <a href="/menu">Menu</a>
+        <a href="/logout">Logout</a>
+    </nav>
+</header>
+
+<section class="orders-section">
+    <h2>Order History</h2>
+
+    {% if orders %}
+        {% for order in orders %}
+        <div class="order-card">
+            <p><strong>Order ID:</strong> {{ order.id }}</p>
+            <p><strong>Items:</strong> {{ order.items }}</p>
+            {% if order.customization %}
+            <p><strong>Special Requests:</strong> {{ order.customization }}</p>
+            {% endif %}
+            <p><strong>Total:</strong> ₹{{ order.total }}</p>
+            <p><strong>Status:</strong> <span style="color: {% if order.status == 'Placed' %}#ff6b6b{% elif order.status == 'Processing' %}#ffa500{% elif order.status == 'Ready' %}#4CAF50{% else %}#2196F3{% endif %};">{{ order.status }}</span></p>
+            <p><strong>Ordered on:</strong> {{ order.created_at.strftime('%d-%m-%Y %H:%M') if order.created_at else 'N/A' }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align: center; color: #999; margin-top: 50px;">No orders placed yet. <a href="/menu">Go to Menu</a></p>
+    {% endif %}
+</section>
+
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Ammuchi - Add Food</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f7efe6 0%, #faf8f3 100%);
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            padding: 20px 80px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            color: #ff5a3c;
+            font-size: 28px;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .admin-nav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .admin-nav a:hover {
+            color: #ff5a3c;
+        }
+
+        .admin-container {
+            padding: 40px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 32px;
+            color: #2b2b2b;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 50px;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .alert-error {
+            background-color: #FFE5E5;
+            color: #D32F2F;
+            border-left: 4px solid #D32F2F;
+        }
+
+        .alert-success {
+            background-color: #E5F5E5;
+            color: #2E7D32;
+            border-left: 4px solid #2E7D32;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #ff5a3c;
+            box-shadow: 0 0 8px rgba(255, 90, 60, 0.2);
+        }
+
+        .photo-upload-section {
+            grid-column: 1 / -1;
+            padding: 30px;
+            background: #f9f9f9;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .photo-upload-section:hover {
+            border-color: #ff5a3c;
+            background: #fff5f0;
+        }
+
+        .photo-upload-section.dragover {
+            border-color: #ff5a3c;
+            background: #fff5f0;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .upload-text strong {
+            color: #2b2b2b;
+        }
+
+        #photoInput {
+            display: none;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            background: #ff5a3c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .file-input-label:hover {
+            background: #ff7a5c;
+            transform: translateY(-2px);
+        }
+
+        .photo-preview {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .photo-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .photo-name {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            grid-column: 1 / -1;
+            margin-top: 20px;
+        }
+
+        .submit-btn {
+            flex: 1;
+            padding: 14px 30px;
+            background: linear-gradient(135deg, #ff5a3c, #ff7a5c);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 90, 60, 0.3);
+        }
+
+        .reset-btn {
+            padding: 14px 30px;
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .food-items-section {
+            margin-top: 60px;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .food-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .food-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .food-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #f0f0f0;
+        }
+
+        .food-content {
+            padding: 20px;
+        }
+
+        .food-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2b2b2b;
+            margin-bottom: 8px;
+        }
+
+        .food-category {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .food-price {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ff5a3c;
+            margin-bottom: 12px;
+        }
+
+        .food-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .food-badge.veg {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .food-badge.non-veg {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .food-badge.special {
+            background: #FFD700;
+            color: #333;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-header,
+            .admin-container {
+                padding: 20px 40px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group input,
+            .form-group select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .admin-header,
+            .admin-container {
+                padding: 15px 20px;
+            }
+
+            .admin-nav {
+                gap: 15px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .food-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="admin-header">
+    <h1>🍽️ Admin Panel</h1>
+    <nav class="admin-nav">
+        <a href="/admin/orders">📋 View Orders</a>
+        <a href="/menu">🍴 View Menu</a>
+        <a href="/admin/logout">🚪 Logout</a>
+    </nav>
+</header>
+
+<div class="admin-container">
+    <h2 class="section-title">➕ Add New Food Item</h2>
+
+    <div class="form-container">
+        {% if error %}
+        <div class="alert alert-error">⚠️ {{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+        <div class="alert alert-success">✓ {{ success }}</div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" id="addFoodForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">Food Name *</label>
+                    <input type="text" id="name" name="name" placeholder="e.g., Butter Chicken" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price (₹) *</label>
+                    <input type="number" id="price" name="price" placeholder="e.g., 250" required min="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <input type="text" id="category" name="category" placeholder="e.g., Main Course" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="veg_type">Type *</label>
+                    <select id="veg_type" name="veg_type" required>
+                        <option value="">Select Type</option>
+                        <option value="Veg">🌱 Vegetarian</option>
+                        <option value="Non-Veg">🍗 Non-Vegetarian</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="weekly_special">Weekly Special</label>
+                    <select id="weekly_special" name="weekly_special">
+                        <option value="">Not a Weekly Special</option>
+                        <option value="Monday">Monday Special</option>
+                        <option value="Tuesday">Tuesday Special</option>
+                        <option value="Wednesday">Wednesday Special</option>
+                        <option value="Thursday">Thursday Special</option>
+                        <option value="Friday">Friday Special</option>
+                        <option value="Saturday">Saturday Special</option>
+                        <option value="Sunday">Sunday Special</option>
+                    </select>
+                </div>
+
+                <!-- Photo Upload Section -->
+                <div class="photo-upload-section" id="dropZone">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">
+                        <strong>Drag and drop your photo here</strong><br>
+                        or click below to select
+                    </div>
+                    <label for="photoInput" class="file-input-label">Choose Photo</label>
+                    <input type="file" id="photoInput" name="photo" accept="image/*">
+                    <div class="photo-preview" id="photoPreview">
+                        <img id="previewImage" alt="Preview">
+                        <div class="photo-name">Photo: <span id="photoNameDisplay"></span></div>
+                    </div>
+                    <input type="hidden" id="image_url" name="image_url" value="">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">➕ Add Food Item</button>
+                    <button type="reset" class="reset-btn">🔄 Clear</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Existing Food Items -->
+    <div class="food-items-section">
+        <h2 class="section-title">📚 Existing Food Items ({{ foods|length }})</h2>
+
+        {% if foods %}
+            <div class="food-grid">
+                {% for food in foods %}
+                <div class="food-card">
+                    <img src="{{ food.image_url }}" alt="{{ food.name }}" class="food-image" onerror="this.src='/static/images/default-food.svg'">
+                    <div class="food-content">
+                        <h4 class="food-name">{{ food.name }}</h4>
+                        <p class="food-category">{{ food.category }}</p>
+                        <p class="food-price">₹{{ food.price }}</p>
+                        <div>
+                            <span class="food-badge {% if food.veg_type == 'Veg' %}veg{% else %}non-veg{% endif %}">
+                                {% if food.veg_type == 'Veg' %}🌱 Vegetarian{% else %}🍗 Non-Veg{% endif %}
+                            </span>
+                            {% if food.weekly_special %}
+                            <span class="food-badge special">⭐ {{ food.weekly_special }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; background: white; border-radius: 16px; color: #999;">
+                <p>No food items yet. Add one above!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Handle photo upload and preview
+const dropZone = document.getElementById('dropZone');
+const photoInput = document.getElementById('photoInput');
+const previewImage = document.getElementById('previewImage');
+const photoPreview = document.getElementById('photoPreview');
+const photoNameDisplay = document.getElementById('photoNameDisplay');
+const imageUrlInput = document.getElementById('image_url');
+const nameInput = document.getElementById('name');
+
+// File upload handler
+photoInput.addEventListener('change', handleFileSelect);
+
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            previewImage.src = event.target.result;
+            photoPreview.style.display = 'block';
+            
+            // Get file extension
+            const ext = file.name.split('.').pop();
+            const foodName = nameInput.value.trim() || 'food';
+            const fileName = `${foodName.toLowerCase().replace(/\s+/g, '_')}.${ext}`;
+            photoNameDisplay.textContent = fileName;
+            
+            // Store the file info
+            photoInput.dataset.fileName = fileName;
+            photoInput.dataset.fileObj = JSON.stringify({
+                name: file.name,
+                size: file.size,
+                type: file.type
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Drag and drop
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        photoInput.files = files;
+        handleFileSelect({ target: { files: files } });
+    }
+});
+
+// Update filename when food name changes
+nameInput.addEventListener('change', () => {
+    if (photoInput.files.length > 0) {
+        const ext = photoInput.files[0].name.split('.').pop();
+        const foodName = nameInput.value.trim() || 'food';
+        const fileName = `${foodName.toLowerCase().replace(/\s+/g, '_')}.${ext}`;
+        photoNameDisplay.textContent = fileName;
+        photoInput.dataset.fileName = fileName;
+    }
+});
+
+// Form submission
+document.getElementById('addFoodForm').addEventListener('submit', function(e) {
+    if (photoInput.files.length > 0) {
+        const ext = photoInput.files[0].name.split('.').pop();
+        const foodName = nameInput.value.trim();
+        const fileName = `${foodName.toLowerCase().replace(/\s+/g, '_')}.${ext}`;
+        imageUrlInput.value = `/static/images/${fileName}`;
+    }
+});
+</script>
+
+</body>
+</html>

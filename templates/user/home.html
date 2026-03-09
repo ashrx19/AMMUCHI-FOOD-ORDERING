@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ammuchi | Food Experience</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar modern-nav">
+    <div class="logo">🍽️ Ammuchi</div>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/login">Login</a>
+        <a href="/signup" class="btn-primary small">Sign Up</a>
+    </nav>
+</header>
+
+<!-- HERO SECTION -->
+<section class="hero-modern">
+    <div class="hero-left">
+        <h1>
+            It’s not just <br>
+            <span>Food</span>, it’s an <br>
+            <strong>Experience.</strong>
+        </h1>
+
+        <p>
+            Discover freshly prepared homemade meals crafted with
+            passion and delivered right to your doorstep.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="/menu" class="btn-primary">View Menu</a>
+            <a href="/signup" class="btn-secondary">Join Now</a>
+        </div>
+    </div>
+
+    <div class="hero-right">
+        <img src="{{ url_for('static', filename='images/hero_food.jpg') }}" alt="Food Bowl">
+    </div>
+</section>
+
+
+<!-- FOOD PREVIEW -->
+<section class="food-preview">
+    <h2>Popular Dishes</h2>
+
+    <div class="food-cards">
+        <div class="food-card">
+            <img src="{{ url_for('static', filename='images/salad.jpeg') }}">
+            <h4>Healthy Salad</h4>
+            <p>₹180</p>
+        </div>
+
+        <div class="food-card">
+            <img src="{{ url_for('static', filename='images/pasta.jpeg') }}">
+            <h4>Italian Pasta</h4>
+            <p>₹220</p>
+        </div>
+
+        <div class="food-card">
+            <img src="{{ url_for('static', filename='images/biryani.jpeg') }}">
+            <h4>Veg Biriyani</h4>
+            <p>₹160</p>
+        </div>
+
+        <div class="food-card">
+            <img src="{{ url_for('static', filename='images/dessert.jpeg') }}">
+            <h4>Chocolate Dessert</h4>
+            <p>₹140</p>
+        </div>
+    </div>
+</section>
+
+<!-- WEEKLY SPECIALS SECTION -->
+{% if weekly_specials %}
+<section class="food-preview" style="background: linear-gradient(135deg, #fff5f0 0%, #ffe8e0 100%); margin-top: 40px;">
+    <h2 style="color: #ff5a3c; text-shadow: 1px 1px 2px rgba(0,0,0,0.05);">⭐ Weekly Specials</h2>
+    <p style="text-align: center; color: #666; margin-bottom: 30px;">Limited time offers - Don't miss out!</p>
+
+    <div class="food-cards">
+        {% for food in weekly_specials %}
+        <div class="food-card" style="border: 3px solid #ff5a3c; box-shadow: 0 8px 20px rgba(255, 90, 60, 0.3); background: linear-gradient(135deg, #fff5f0 0%, #ffffff 100%);">
+            <div style="position: relative;">
+                <img src="{{ food.image_url }}" alt="{{ food.name }}" onerror="this.src='/static/images/default-food.svg'" style="width: 100%; height: 150px; object-fit: cover;">
+                <span style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #ff5a3c, #ff7a5c); color: white; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.8em;">SPECIAL</span>
+            </div>
+            <h4>{{ food.name }}</h4>
+            <p style="font-size: 0.9em; color: #666;">{{ food.category }}</p>
+            <p style="font-size: 0.8em; background: {% if food.veg_type == 'Veg' %}#E8F5E9{% else %}#FFEBEE{% endif %}; color: {% if food.veg_type == 'Veg' %}#2E7D32{% else %}#C62828{% endif %}; padding: 3px 8px; border-radius: 3px; display: inline-block; margin-bottom: 10px;">{{ food.veg_type }}</p>
+            <p style="font-weight: bold; color: #ff5a3c; font-size: 1.2em;">₹{{ food.price }}</p>
+            {% if food.weekly_special %}
+            <p style="font-size: 0.8em; color: #ff5a3c; font-weight: bold;">⭐ {{ food.weekly_special }} Special</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+</body>
+</html>
