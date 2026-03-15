@@ -1,6 +1,3 @@
-"""
-Script to add an admin account to MongoDB
-"""
 
 from dotenv import load_dotenv
 import os
@@ -18,7 +15,7 @@ if not MONGODB_URI:
 
 # Connect to MongoDB
 connect(host=MONGODB_URI)
-    
+            
 def add_admin():
     """Add the admin account"""
     
